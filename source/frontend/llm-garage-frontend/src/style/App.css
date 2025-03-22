@@ -1,0 +1,111 @@
+/* Base Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar nav ul li a {
+  text-decoration: none;
+  color: #6200ee;
+  font-size: 16px;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar nav ul li a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Main Content Area */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+/* Section Styling */
+.section {
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styling */
+.header {
+  padding: 15px;
+  background-color: #333;
+  color: white;
+  text-align: left;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* Material Design–Inspired Button */
+/* .button {
+  background-color: #6200ee;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-top: 10px;
+}
+
+.button:hover {
+  background-color: #3700b3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+} */
+
+.button:active {
+  background-color: #3700b3;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="number"],
+input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

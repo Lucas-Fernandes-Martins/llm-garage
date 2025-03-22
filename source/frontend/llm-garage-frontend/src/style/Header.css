@@ -1,0 +1,25 @@
+/* Header.css */
+.navbar {
+    background-color: #f0f0f0; /* Light background instead of black */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .navbar-content {
+    text-align: center;
+  }
+  
+  .navbar-title {
+    margin: 0;
+    font-size: 3rem;
+    color: #333;
+  }
+  
+  .navbar-subtitle {
+    margin: 0;
+    font-size: 2rem;
+    color: #666;
+  }
+  

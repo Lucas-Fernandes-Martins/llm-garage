@@ -1,0 +1,7 @@
+source/backend/weights/
+source/backend/weights/weights.pht
+source/backend/results/
+source/backend/venv/
+source/frontend/llm-garage-frontend/node_modules/
+node_modules/
+project_venv/
