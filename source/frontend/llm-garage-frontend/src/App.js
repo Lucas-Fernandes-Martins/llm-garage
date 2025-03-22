@@ -41,6 +41,7 @@ function App() {
   const [modelName, setModelName] = useState("google/gemma-3-1b-pt");
   const [epochs, setEpochs] = useState(1);
   const [learningRate, setLearningRate] = useState(0.0002);
+  const [loraRank, setLoraRank] = useState(4);
   const [wsStatus, setWsStatus] = useState("");
   const [lossData, setLossData] = useState([]);
   const [weightsUrl, setWeightsUrl] = useState(null); // New state for weights URL
@@ -111,6 +112,7 @@ function App() {
         dataset_path: datasetFile ? datasetFile.name : "",
         epochs: epochs,
         learning_rate: learningRate,
+        lora_rank: loraRank,
       };
       ws.current.send(JSON.stringify(payload));
     };
@@ -190,9 +192,11 @@ function App() {
           modelName={modelName}
           epochs={epochs}
           learningRate={learningRate}
+          loraRank={loraRank}
           onModelNameChange={setModelName}
           onEpochsChange={setEpochs}
           onLearningRateChange={setLearningRate}
+          onLoraRankChange={setLoraRank}
         />
         <FinetuneControl onStart={startFinetuning} wsStatus={wsStatus} />
         <LossGraph lossData={lossData} />
