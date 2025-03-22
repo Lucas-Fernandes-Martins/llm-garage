@@ -1,4 +1,4 @@
-# Gemma LLM Garage 🚀
+# Gemma LLM Garage 💎
 
 **Empowering anyone on the planet to fine-tune language models with just a dataset! 🌍**
 
