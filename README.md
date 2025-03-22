@@ -6,7 +6,7 @@
 
 Now supporting the new **Gemma 3** family models!!!!
 
-Gemma LLM Garage is an  application that makes fine-tuning accessible to everyone. With just your dataset, you can:
+Gemma LLM Garage is an application that makes fine-tuning accessible to everyone. With just your dataset, you can:
 - **Fine-tune models** 🤖
 - **Monitor training loss in real time** 📈
 - **Test your fine-tuned model through inference**
@@ -32,6 +32,8 @@ Gemma LLM Garage is an  application that makes fine-tuning accessible to everyon
   - Built with **React**
   - Hosted on **Firebase**
 
+![Architecture Diagram](./figs/diagram.png)
+
 ---
 
 ## Getting Started 🚀
@@ -40,4 +42,3 @@ Gemma LLM Garage is an  application that makes fine-tuning accessible to everyon
    ```bash
    git clone https://github.com/your-username/llm-garage.git
    cd llm-garage
-
