@@ -73,7 +73,7 @@ class FineTuningEngine:
         self.datasets.append(dataset)
         return dataset
 
-    def set_lora_fine_tuning(self, dataset=None, learning_rate=2e-4, epochs=1, callback_loop=None):
+    def set_lora_fine_tuning(self, dataset=None, learning_rate=2e-4, epochs=1, lora_rank=4, callback_loop=None):
         if dataset is None:
             ccdv_dataset = "King-Harry/NinjaMasker-PII-Redaction-Dataset"
             dataset = load_dataset(ccdv_dataset, split="train", trust_remote_code=True)
@@ -83,7 +83,7 @@ class FineTuningEngine:
         lora_alpha=16,
         lora_dropout=0.1,
         target_modules=["q_proj", "v_proj"],
-        r=8,
+        r=lora_rank,
         bias="none",
         task_type="CAUSAL_LM",
         )

@@ -15,6 +15,7 @@ class FinetuneRequest(BaseModel):
     dataset_path: str
     epochs: int
     learning_rate: float
+    lora_rank: int = 4  # Add lora_rank with default value of 4
 
 
 requests = []
@@ -38,6 +39,7 @@ async def websocket_endpoint(websocket: WebSocket):
     dataset_path = payload.get("dataset_path")
     epochs = payload.get("epochs")
     learning_rate = payload.get("learning_rate")
+    lora_rank = payload.get("lora_rank", 4)  # Get lora_rank with default of 4
 
     await websocket.send_json({"test connection": "success", "model_name": model_name, "dataset_path": dataset_path})
     
@@ -47,8 +49,9 @@ async def websocket_endpoint(websocket: WebSocket):
     engine = FineTuningEngine(model_name, websocket)
     dataset = engine.load_new_dataset(dataset_path)
     engine.set_lora_fine_tuning(dataset, 
-                                learning_rate= learning_rate, 
-                                epochs = epochs, 
+                                learning_rate=learning_rate, 
+                                epochs=epochs,
+                                lora_rank=lora_rank,  # Pass lora_rank to the engine
                                 callback_loop=main_loop)  # Pass the loop to set up callbacks
     
     # Offload the blocking training process to a thread
@@ -87,10 +90,11 @@ async def finetune(request:FinetuneRequest):
         # return FileResponse(path=weights_path, filename=os.path.basename(weights_path))
         model_name = request.model_name
         dataset_path = request.dataset_path
+        lora_rank = request.lora_rank  # Get lora_rank from request
 
         engine = FineTuningEngine(model_name)
         engine.load_new_dataset(dataset_path)
-        engine.set_lora_fine_tuning()
+        engine.set_lora_fine_tuning(lora_rank=lora_rank)  # Pass lora_rank to the engine
         engine.perform_fine_tuning()
         return {"model_name": request.model_name, "dataset_path": request.dataset_path}
     
