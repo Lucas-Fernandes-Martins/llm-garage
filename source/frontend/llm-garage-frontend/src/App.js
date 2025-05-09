@@ -6,6 +6,7 @@ import FinetuneControl from "./components/FinetuneControl";
 import LossGraph from "./components/LossGraph";
 import Sidebar from "./components/Sidebar";
 import TestLLM from "./components/TestLLM";
+import DatasetPreview from "./components/DatasetPreview";
 import "./style/App.css";
 
 // Import our API endpoints
@@ -38,7 +39,7 @@ ChartJS.register(
 function App() {
   const [datasetFile, setDatasetFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
-  const [modelName, setModelName] = useState("google/gemma-3-1b-pt");
+  const [modelName, setModelName] = useState("google/gemma-3-1b-it");
   const [epochs, setEpochs] = useState(1);
   const [learningRate, setLearningRate] = useState(0.0002);
   const [loraRank, setLoraRank] = useState(4);
@@ -129,7 +130,7 @@ function App() {
         } else if (message.status) {
           setWsStatus(message.status);
           setWeightsUrl(message.weights_url);
-          setWsStatus("Fine-tuning complete. Weights ready for download.");
+          setWsStatus("Fine-tuning started.");
         } else if (message["test connection"]) {
           console.log("Backend response:", message);
         }
@@ -187,6 +188,10 @@ function App() {
           onFileChange={handleFileChange}
           uploadStatus={uploadStatus}
           onUpload={uploadDataset}
+        />
+        <DatasetPreview 
+          datasetFile={datasetFile}
+          dataset_path={datasetFile ? datasetFile.name : null}
         />
         <TrainingParameters
           modelName={modelName}

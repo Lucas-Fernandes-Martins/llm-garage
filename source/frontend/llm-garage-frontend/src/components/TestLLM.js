@@ -66,7 +66,7 @@ const modelOptions = [
 
 const TestLLMWebSocket = () => {
   const [prompt, setPrompt] = useState("");
-  const [modelName, setModelName] = useState("google/gemma-3-1b-pt");
+  const [modelName, setModelName] = useState("google/gemma-3-1b-it");
   // Hardcoded weights path
   const weightsPath = "./weights/weights.pth";
   const [response, setResponse] = useState("");

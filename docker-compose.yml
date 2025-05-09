@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  backend:
+    build: ./source/backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - llm_garage_weights:/app/weights
+
+volumes:
+  llm_garage_weights:

@@ -56,10 +56,10 @@ const selectStyles = {
 };
 
 const modelOptions = [
-  {value:"google/gemma-3-1b-pt", label:"google/gemma-3-1b-pt"},
   {value:"google/gemma-3-1b-it", label:"google/gemma-3-1b-it"},
-  {value:"google/gemma-3-4b-pt", label:"google/gemma-3-4b-pt"},
+  {value:"google/gemma-3-1b-pt", label:"google/gemma-3-1b-pt"},
   {value:"google/gemma-3-4b-it", label:"google/gemma-3-4b-it"},
+  {value:"google/gemma-3-4b-pt", label:"google/gemma-3-4b-pt"},
   { value: "google/gemma-2b", label: "google/gemma-2b" },
   //{ value: "princeton-nlp/Sheared-LLaMA-1.3B", label: "princeton-nlp/Sheared-LLaMA-1.3B" },
   { value: "google/gemma-2-2b-it", label: "google/gemma-2-2b-it" }

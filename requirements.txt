@@ -1,0 +1,5 @@
+nlpaug>=1.1.11
+nltk>=3.4.5
+torch>=1.6.0
+transformers>=4.11.3
+sentencepiece 

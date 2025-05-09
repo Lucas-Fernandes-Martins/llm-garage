@@ -15,7 +15,8 @@ async def get_download_link(request: Request):
         raise HTTPException(status_code=404, detail="File not found")
     # Construct the URL for the GET endpoint that serves the file.
     # Adjust the host/port as needed.
-    download_link = f"http://localhost:8000/download/download_file?weights_path={weights_path}"
+    download_link = f"https://llm-garage-api-513913820596.us-central1.run.app/download/download_file?weights_path={weights_path}"
+    
     return JSONResponse({"download_link": download_link})
 
 # GET endpoint that serves the file for download

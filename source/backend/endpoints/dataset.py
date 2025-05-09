@@ -1,13 +1,29 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Body, Query
+from fastapi.responses import JSONResponse
 import os
 import json
 import csv
 import fitz  # PyMuPDF
 import re
 import unicodedata
-from utils.file_handler import save_uploaded_file
+from utils.file_handler import save_uploaded_file, UPLOAD_DIR
+import nlpaug.augmenter.char as nac
+import nlpaug.augmenter.word as naw
+import nlpaug.augmenter.sentence as nas
+import nlpaug.flow as naf
+import nltk
+from pydantic import BaseModel
+import ssl
+from nlpaug.util import Action
+
+from nlpaug.util.file.download import DownloadUtil
+
 
 router = APIRouter()
+
+class AugmentationRequest(BaseModel):
+    augmentation_type: str
+    dataset_path: str
 
 @router.post("/upload")
 async def upload_dataset(file: UploadFile = File(...)):
@@ -153,6 +169,7 @@ def process_csv_file(csv_path):
             # If no headers, use default column names
             if not headers:
                 headers = [f"column_{i}" for i in range(len(next(csv_reader)))]
+
                 # Reset file pointer
                 f.seek(0)
                 
@@ -215,3 +232,164 @@ def process_flexible_csv(csv_path):
             continue
     
     return training_examples
+
+@router.get("/preview")
+async def preview_dataset(path: str = Query(None)):
+    """
+    Returns a preview of the current dataset (first few entries)
+    """
+    try:
+        # If path is not provided, try to find the most recent dataset
+        if not path:
+            uploads_dir = "./uploads"
+            files = [f for f in os.listdir(uploads_dir) if f.endswith('.json')]
+            if not files:
+                return []
+            path = max([os.path.join(uploads_dir, f) for f in files], key=os.path.getmtime)
+        
+        # Debug log
+        print(f"Preview requested for path: {path}")
+        
+        # Check if file exists
+        if not os.path.exists(path):
+            # Try finding the file in uploads directory if it's not an absolute path
+            if not os.path.isabs(path):
+                potential_path = os.path.join("./uploads", path)
+                if os.path.exists(potential_path):
+                    path = potential_path
+                else:
+                    raise HTTPException(status_code=404, detail=f"File not found: {path}")
+            else:
+                raise HTTPException(status_code=404, detail=f"File not found: {path}")
+        
+        # Debug log
+        print(f"Using path for preview: {path}")
+        
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+            # Handle both list and dict formats
+            if isinstance(data, list):
+                full_count = len(data)
+                preview = data[:5]  # Just show first 5 entries
+            else:
+                full_count = len(data)
+                preview = list(data.values())[:5]
+                
+            # Return preview data with count
+            return {
+                "preview": preview,
+                "full_count": full_count
+            }
+    except Exception as e:
+        print(f"Error in preview: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error loading dataset preview: {str(e)}")
+
+@router.post("/augment")
+async def augment_dataset(request: AugmentationRequest):
+    """
+    Augment a dataset file with various text augmentation techniques
+    and return both the file location and the augmented data.
+    Handles structured text with Instruction/Input/Output sections.
+    """
+    try:
+        # Get the full path of the input dataset
+        input_file_path = os.path.join(UPLOAD_DIR, request.dataset_path)
+        if not os.path.exists(input_file_path):
+            raise HTTPException(status_code=404, detail="Dataset file not found")
+        
+        # Load the dataset
+        with open(input_file_path, 'r', encoding='utf-8') as f:
+            dataset = json.load(f)
+        
+        # Configure the augmenter based on the selected type
+        augmenter = None
+        if request.augmentation_type == "keyboard":
+            augmenter = nac.KeyboardAug( aug_char_min=0, aug_char_max=2)
+        elif request.augmentation_type == "random_word":
+            augmenter = naw.RandomWordAug()
+        elif request.augmentation_type == "spelling":
+            augmenter = nac.SpellingAug()
+        elif request.augmentation_type == "synonym":
+            augmenter = naw.SynonymAug(aug_src='wordnet')
+        else:
+            raise HTTPException(status_code=400, detail="Invalid augmentation type")
+        
+        # Process each item in the dataset
+        augmented_dataset = []
+        for item in dataset:
+            if "text" in item:
+                text = item["text"]
+                
+                # Extract the sections using regex - ONLY extract the content, not the labels
+                instruction_match = re.search(r"Instruction:(.*?)(?=Input:|$)", text, re.DOTALL)
+                input_match = re.search(r"Input:(.*?)(?=Output:|$)", text, re.DOTALL)
+                output_match = re.search(r"Output:(.*?)(?=$)", text, re.DOTALL)
+                
+                # If structured format is detected
+                if instruction_match or input_match or output_match:
+                    augmented_text = ""
+                    
+                    # Process instruction section if found
+                    if instruction_match:
+                        # Keep the label, only augment the content
+                        instruction_content = instruction_match.group(1)
+                        augmented_instruction = augmenter.augment(instruction_content)
+                        if isinstance(augmented_instruction, list):
+                            augmented_instruction = augmented_instruction[0]
+                        augmented_text += "Instruction: " + augmented_instruction
+                    
+                    # Process input section if found
+                    if input_match:
+                        input_content = input_match.group(1)
+                        augmented_input = augmenter.augment(input_content)
+                        if isinstance(augmented_input, list):
+                            augmented_input = augmented_input[0]
+                        augmented_text += " Input: " + augmented_input
+                    
+                    # Process output section if found
+                    if output_match:
+                        output_content = output_match.group(1)
+                        augmented_output = augmenter.augment(output_content)
+                        if isinstance(augmented_output, list):
+                            augmented_output = augmented_output[0]
+                        augmented_text += " Output: " + augmented_output
+                    
+                    # Create a new item with the augmented text
+                    augmented_item = item.copy()
+                    augmented_item["text"] = augmented_text.strip()
+                    augmented_dataset.append(augmented_item)
+                else:
+                    # No structured format found, augment the entire text
+                    augmented_text = augmenter.augment(text)
+                    if isinstance(augmented_text, list):
+                        augmented_text = augmented_text[0]
+                    
+                    # Create a new item with the augmented text
+                    augmented_item = item.copy()
+                    augmented_item["text"] = augmented_text.strip()
+                    augmented_dataset.append(augmented_item)
+        
+        # Save the augmented dataset
+        output_filename = f"augmented_{os.path.basename(request.dataset_path)}"
+        output_file_path = os.path.join(UPLOAD_DIR, output_filename)
+        
+        with open(output_file_path, 'w', encoding='utf-8') as f:
+            json.dump(augmented_dataset, f, ensure_ascii=False, indent=2)
+        
+        # Prepare preview data (first 5 examples)
+        preview_data = augmented_dataset[:5] if len(augmented_dataset) > 5 else augmented_dataset
+        
+        # Return both the file location and the augmented data
+        return {
+            "status": "success",
+            "message": "Dataset augmented successfully",
+            "file_location": output_filename,
+            "augmented_data": {
+                "preview": preview_data,
+                "full_count": len(augmented_dataset)
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -11,12 +11,17 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+# Create the weights directory
+#RUN mkdir -p /app/weights && chmod 777 /app/weights
+
+# Declare the volume
+#VOLUME /app/weights
+
 # Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN huggingface-cli login --token  
-
+RUN huggingface-cli login --token YOUR_TOKEN
 
 # Copy the rest of the application
 COPY . .

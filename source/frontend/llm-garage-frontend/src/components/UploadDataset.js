@@ -5,7 +5,8 @@ import {
   Typography, 
   Paper, 
   CircularProgress,
-  Chip
+  Chip,
+  Link
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -13,6 +14,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import TableChartIcon from "@mui/icons-material/TableChart";
+import InfoIcon from "@mui/icons-material/Info";
 import "../style/assets.css";
 
 // Styled component for the file input
@@ -118,6 +120,30 @@ const UploadDataset = ({ datasetFile, onFileChange, uploadStatus, onUpload }) =>
             <Typography variant="body2">{uploadStatus}</Typography>
           </Box>
         )}
+        
+        {/* Sample Dataset Link */}
+        <Box sx={{ 
+          display: "flex", 
+          alignItems: "center", 
+          gap: 1, 
+          padding: 1, 
+          backgroundColor: "#f0f7ff", 
+          borderRadius: 1,
+          width: "100%"
+        }}>
+          <InfoIcon color="info" fontSize="small" />
+          <Typography variant="body2">
+            No dataset? Use sample {" "}
+            <Link 
+              href="https://drive.google.com/file/d/1EhLdwp54qjkNUBJCfOOEHwZIxB9TVpiB/view?usp=sharing" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              sx={{ fontWeight: "medium", color: "#0277bd", textDecoration: "underline" }}
+            >
+              dataset
+            </Link>
+          </Typography>
+        </Box>
       </Box>
     </Paper>
   );

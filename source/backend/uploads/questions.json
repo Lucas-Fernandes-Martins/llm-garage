@@ -1,0 +1,12 @@
+[
+    {
+        "text": "Instruction: Answer the question\nInput: What is the tallest mountain in the world?\nOutput: Mount Everest"
+    },
+    {
+        "text": "Instruction: Answer the question\nInput: How many legs does a spider have?\nOutput: Eight"
+    },
+    {
+        "text": "Instruction: Answer the question\nInput: What color are bananas when they are ripe?\nOutput: Yellow"
+    }
+]
+
