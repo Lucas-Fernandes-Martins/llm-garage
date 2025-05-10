@@ -8,26 +8,44 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # Optional: Set a default working directory for all 'run' steps in this job
+    defaults:
+      run:
+        working-directory: ./source/frontend/llm-garage-frontend # All 'run' commands will execute here
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        # No working-directory needed here, it checks out the whole repo
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Or your desired Node.js LTS version like 'lts/*'
+          node-version: '18'
+        # No working-directory needed here, it sets up Node globally for the runner
 
       - name: Install dependencies
-        run: npm ci # 'ci' is generally preferred for CI environments
+        # working-directory: ./frontend # Not needed if 'defaults' is set
+        run: npm ci
 
       - name: Build project
+        # working-directory: ./frontend # Not needed if 'defaults' is set
         run: npm run build
+        # If your build output goes to a different folder relative to 'frontend',
+        # e.g., frontend/dist or frontend/build, ensure firebase.json reflects this.
 
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0 # Use the official action
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}' # Recommended for associating commit with deployment
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}' # More secure way
-          channelId: live # Optional: deploy to live channel (default)
-          projectId: gemma-garage
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}' # Or your FIREBASE_TOKEN method
+          projectId: your-firebase-project-id
+          # channelId: live # Optional
+        env:
+          # If using FIREBASE_TOKEN, uncomment and set it
+          # FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        # IMPORTANT: The Firebase action needs to run in the context of your frontend project
+        # if firebase.json is in the ./frontend directory.
+        # The `working-directory` here tells the action where to find firebase.json
+        # and where the build output (specified in firebase.json's "public" field) is.
+        working-directory: ./frontend
