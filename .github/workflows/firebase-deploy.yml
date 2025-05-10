@@ -3,7 +3,7 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,18 +16,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'  
+          node-version: '18' # Or your desired Node.js LTS version like 'lts/*'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci # 'ci' is generally preferred for CI environments
 
       - name: Build project
         run: npm run build
 
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v12
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0 # Use the official action
         with:
-          args: deploy --only hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
+          repoToken: '${{ secrets.GITHUB_TOKEN }}' # Recommended for associating commit with deployment
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}' # More secure way
+          channelId: live # Optional: deploy to live channel (default)
+          projectId: gemma-garage
