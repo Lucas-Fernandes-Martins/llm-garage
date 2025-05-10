@@ -3,5 +3,8 @@ source/backend/weights/weights.pht
 source/backend/results/
 source/backend/venv/
 source/frontend/llm-garage-frontend/node_modules/
+source/backend/endpoints/__pycache__/
+source/backend/utils/__pycache__/
+source/backend/finetuning/__pycache__/
 node_modules/
 project_venv/
