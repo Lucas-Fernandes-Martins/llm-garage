@@ -36,4 +36,4 @@ jobs:
           # channelId: live
         # env: # Only if using FIREBASE_TOKEN instead of service account
           # FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          working-directory: ./source/frontend/llm-garage-frontend # CRITICAL: This tells the Firebase action where your frontend project (with firebase.json) is
+          #working-directory: ./source/frontend/llm-garage-frontend # CRITICAL: This tells the Firebase action where your frontend project (with firebase.json) is
