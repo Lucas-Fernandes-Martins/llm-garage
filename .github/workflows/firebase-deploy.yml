@@ -3,37 +3,20 @@ on:
     branches:
       - main
 
+# This 'jobs:' block is just for context of where 'steps:' lives
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./source/frontend/llm-garage-frontend # For 'run:' steps
-
+    # ... other job-level settings like defaults ...
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # ... your previous steps (checkout, setup-node, npm ci, npm run build) ...
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        # No working-directory needed here, uses job default
-        run: npm ci
-
-      - name: Build project
-        # No working-directory needed here, uses job default
-        run: CI=false npm run build
-
-      - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}'
-          projectId: gemma-garage
-          # channelId: live
-        # env: # Only if using FIREBASE_TOKEN instead of service account
-          # FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          workingDirectory: ./source/frontend/llm-garage-frontend # CRITICAL: This tells the Firebase action where your frontend project (with firebase.json) is
+      # THE DEPLOY STEP:
+      - name: Deploy to Firebase                # Step starts here. Let's call this Indentation Level 0 for the step.
+        uses: FirebaseExtended/action-hosting-deploy@v0 # Same Indentation Level 0
+        with:                                   # Same Indentation Level 0
+          repoToken: '${{ secrets.GITHUB_TOKEN }}' # Indented further (child of 'with')
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}' # Indented further
+          projectId: gemma-garage                 # Indented further
+          # channelId: live                     # Indented further (commented out)
+        working-directory: ./source/frontend/llm-garage-frontend # Same Indentation Level 0
