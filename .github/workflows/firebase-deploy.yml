@@ -32,8 +32,8 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_YOUR_PROJECT_NAME }}'
-          projectId: your-firebase-project-id
+          projectId: gemma-garage
           # channelId: live
         # env: # Only if using FIREBASE_TOKEN instead of service account
           # FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          #working-directory: ./source/frontend/llm-garage-frontend # CRITICAL: This tells the Firebase action where your frontend project (with firebase.json) is
+         #working-directory: ./source/frontend/llm-garage-frontend # CRITICAL: This tells the Firebase action where your frontend project (with firebase.json) is
